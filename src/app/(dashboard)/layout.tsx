@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import logoPic from "../../../public/logo.png";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { isAuthenticated, removeToken } from "@/lib/api";
@@ -58,7 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         
         <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #E2E8F0" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <img src="/logo.png" alt="Curefully Logo" style={{ width: "40px", height: "40px", objectFit: "contain", flexShrink: 0 }} />
+            <img src={logoPic.src} alt="Curefully Logo" style={{ width: "40px", height: "40px", objectFit: "contain", flexShrink: 0 }} />
             <div>
               <div style={{ fontWeight: 800, fontSize: "15px", color: "#0D1117" }}>Curefully</div>
               <div style={{ fontSize: "11px", color: "#718096" }}>Seller Dashboard</div>
@@ -119,7 +120,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: "none", border: "none", fontSize: "22px", cursor: "pointer", color: "#4A5568" }}>☰</button>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 800, fontSize: "15px", color: "#006BD5" }}>
-              <img src="/logo.png" alt="Curefully Logo" style={{ height: "24px", objectFit: "contain" }} />
+              <img src={logoPic.src} alt="Curefully Logo" style={{ height: "24px", objectFit: "contain" }} />
               Curefully
             </div>
           </div>

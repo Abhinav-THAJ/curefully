@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import logoPic from "../../../public/logo.png";
 
 export const metadata: Metadata = {
   title: "Curefully Seller - Sign In",
@@ -30,7 +31,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div style={{ textAlign: "center", zIndex: 1, maxWidth: "380px" }}>
           {/* Logo */}
           <img 
-            src="/logo.png" 
+            src={logoPic.src} 
             alt="Curefully Logo"
             style={{
               width: "100px", height: "100px", objectFit: "contain",
