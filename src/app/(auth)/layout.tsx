@@ -7,14 +7,14 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="auth-layout-container" style={{
       minHeight: "100vh",
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
       background: "#0D1117",
     }}>
       {/* Left Panel - Branding */}
-      <div style={{
+      <div className="auth-left-panel" style={{
         background: "linear-gradient(135deg, #006BD5 0%, #004fa3 50%, #003680 100%)",
         display: "flex",
         flexDirection: "column",
@@ -56,7 +56,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* Right Panel - Auth Form */}
-      <div style={{
+      <div className="auth-right-panel" style={{
         background: "white",
         display: "flex",
         flexDirection: "column",
@@ -65,21 +65,24 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         padding: "60px 48px",
         overflowY: "auto",
       }}>
-        <div style={{ width: "100%", maxWidth: "420px" }}>
+        <div className="auth-form-container" style={{ width: "100%", maxWidth: "420px" }}>
           {children}
         </div>
       </div>
 
       <style>{`
         @media (max-width: 768px) {
-          div[style*="gridTemplateColumns"] {
+          .auth-layout-container {
             grid-template-columns: 1fr !important;
           }
-          div[style*="linear-gradient(135deg"] {
+          .auth-left-panel {
             display: none !important;
           }
-          div[style*="max-width: 420px"] {
-            padding: 20px !important;
+          .auth-right-panel {
+            padding: 24px !important;
+          }
+          .auth-form-container {
+            max-width: 100% !important;
           }
         }
       `}</style>

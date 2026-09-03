@@ -88,7 +88,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Fields */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "24px" }}>
+          <div className="grid-2" style={{ gap: "20px", marginBottom: "24px" }}>
             {[
               { label: "Full Name",      key: "name",    type: "text"  },
               { label: "Email Address",  key: "email",   type: "email" },

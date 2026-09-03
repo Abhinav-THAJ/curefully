@@ -421,7 +421,7 @@ export default function SignUpPage() {
           <Field label="Country" required error={errors.country}>
             <TextInput value={form.country} onChange={e => setField("country")(e.target.value)} placeholder="e.g. India" hasError={!!errors.country} />
           </Field>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div className="grid-2" style={{ gap: 12 }}>
             <Field label="Latitude" required error={errors.latitude}>
               <TextInput type="number" step="any" value={form.latitude} onChange={e => setField("latitude")(e.target.value)} placeholder="e.g. 10.8505" hasError={!!errors.latitude} />
             </Field>
@@ -457,6 +457,13 @@ export default function SignUpPage() {
         Already have an account?{" "}
         <Link href="/login" style={{ color: PRI, fontWeight: 700 }}>Sign In</Link>
       </p>
+
+      <style>{`
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; }
+        @media (max-width: 640px) {
+          .grid-2 { grid-template-columns: 1fr; }
+        }
+      `}</style>
     </div>
   );
 }

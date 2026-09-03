@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
@@ -17,7 +17,8 @@ export default function OrdersPage() {
 
   useEffect(() => {
     api.get(ApiRoutes.orders).then(res => {
-      setOrders(res?.data?.data || []);
+      const ordersData = Array.isArray(res?.data) ? res.data : (res?.data?.data || []);
+      setOrders(ordersData);
       setLoading(false);
     }).catch(err => {
       console.error(err);
@@ -62,26 +63,61 @@ export default function OrdersPage() {
             <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px" }}>No orders found</h3>
             <p style={{ color: "#718096", fontSize: "14px" }}>Try adjusting your search or filters.</p>
           </div>
-        ) : filtered.map(order => (
-          <Link key={order.id} href={`/orders/${order.id}`} style={{ background: "white", borderRadius: "14px", padding: "18px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #E2E8F0", textDecoration: "none", color: "inherit", display: "block" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", flexWrap: "wrap" }}>
-                  <span style={{ fontWeight: 800, fontSize: "15px", color: "#006BD5" }}>{order.order_number}</span>
-                  <span className={`badge ${statusColors[order.status] || "badge-received"}`}>{order.status?.replace(/_/g, " ")}</span>
-                  <span className={`badge ${order.payment_status === "paid" ? "badge-paid" : "badge-pending"}`}>{order.payment_status}</span>
+        ) : filtered.map((order, index) => {
+          const detailId = order.order?.id || order.id || order.order_id || index;
+          const uniqueKey = order.order_item_id || order.id || order.order_id || `order-${index}`;
+          const status = (order.order?.delivery_type?.toLowerCase() === 'pickup' ? order.order?.status : order.status) || "pending";
+          const price = order.subtotal?.formatted || `$${order.payable || order.total || '0.00'}`;
+          const productTitle = order.product?.title || order.user_mobile || "Multiple Items";
+          const deliveryType = order.order?.delivery_type?.toLowerCase() === 'pickup' ? 'Pickup' : (order.order?.is_rush_order ? 'Rush Delivery' : 'Standard Delivery');
+          const imageUrl = order.order?.image || order.image || order.product?.main_image || "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=150";
+          const qty = order.quantity || 1;
+          const isPending = status === 'pending' || status === 'awaiting_store_response';
+          
+          return (
+            <div key={uniqueKey} style={{ background: "white", borderRadius: "14px", padding: "18px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #E2E8F0", marginBottom: "16px" }}>
+              <Link href={`/orders/${detailId}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+                <div style={{ display: "flex", gap: "16px" }}>
+                  <img src={imageUrl} alt="Order item" style={{ width: "64px", height: "64px", borderRadius: "8px", objectFit: "cover", backgroundColor: "#F7FAFC" }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+                      <h3 style={{ fontSize: "16px", fontWeight: 700, margin: 0, color: "#0D1117" }}>{productTitle}</h3>
+                      <span className={`badge ${statusColors[status] || "badge-received"}`}>{status.replace(/_/g, " ").toUpperCase()}</span>
+                    </div>
+                    <div style={{ fontSize: "13px", color: "#4A5568", marginTop: "4px" }}>Qty: {qty} × {price}</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
+                      <div style={{ fontSize: "13px", color: "#718096" }}>
+                        Delivery Type: <span style={{ color: deliveryType === 'Pickup' ? '#059669' : '#D97706', fontWeight: 600 }}>{deliveryType}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#718096" }}>{order.created_at ? new Date(order.created_at).toLocaleDateString() : ""}</div>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: "14px", color: "#4A5568", marginBottom: "6px" }}>👤 {order.user_name} • {order.user_mobile}</div>
-                <div style={{ fontSize: "13px", color: "#718096", marginBottom: "6px" }}>📍 {order.address}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "20px", fontWeight: 800, color: "#0D1117" }}>${order.payable}</div>
-                <div style={{ fontSize: "12px", color: "#718096", marginTop: "4px" }}>{order.created_at}</div>
-                <div style={{ fontSize: "12px", color: "#718096", marginTop: "2px" }}>via {order.payment_method?.toUpperCase()}</div>
-              </div>
+              </Link>
+              
+              {isPending && (
+                <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+                  <button 
+                    onClick={() => {
+                       api.post(`${ApiRoutes.orders}/${order.order_item_id || order.id}/reject`, {}).then(() => window.location.reload());
+                    }} 
+                    style={{ flex: 1, padding: "12px", background: "white", border: "1.5px solid #EF4444", color: "#EF4444", borderRadius: "10px", fontWeight: 700, cursor: "pointer" }}
+                  >
+                    Reject
+                  </button>
+                  <button 
+                    onClick={() => {
+                       api.post(`${ApiRoutes.orders}/${order.order_item_id || order.id}/accept`, {}).then(() => window.location.reload());
+                    }} 
+                    style={{ flex: 1, padding: "12px", background: "#10B981", border: "none", color: "white", borderRadius: "10px", fontWeight: 700, cursor: "pointer" }}
+                  >
+                    Accept
+                  </button>
+                </div>
+              )}
             </div>
-          </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

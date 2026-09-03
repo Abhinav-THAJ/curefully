@@ -245,6 +245,14 @@ export default function AddProductPage() {
           {submitting ? "Submitting…" : step === 7 ? "🚀 Save Product" : "Next →"}
         </button>
       </div>
+
+      <style>{`
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 640px) {
+          .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -278,7 +286,7 @@ function Step1({ form, setForm, categories }: any) {
 function Step2({ form, setForm }: any) {
   const set = (k: string) => (e: any) => setForm((f: any) => ({ ...f, [k]: e.target.value }));
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+    <div className="grid-2" style={{ gap: 16 }}>
       <div style={{ gridColumn: "1/-1" }}>
         <Field label="Product Title" required>
           <input value={form.title} onChange={set("title")} style={inp} placeholder="e.g. Organic Almonds 500g" />
@@ -308,12 +316,12 @@ function Step3({ form, setForm }: any) {
   const set = (k: string) => (e: any) => setForm((f: any) => ({ ...f, [k]: e.target.value }));
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+      <div className="grid-3" style={{ gap: 16 }}>
         <Counter label="Min Order Qty" value={form.minOrderQty} min={1} onChange={v => setForm((f: any) => ({ ...f, minOrderQty: v }))} />
         <Counter label="Step Size" value={form.stepSize} min={1} onChange={v => setForm((f: any) => ({ ...f, stepSize: v }))} />
         <Counter label="Max Qty (0=unlimited)" value={form.totalAllowed} min={0} onChange={v => setForm((f: any) => ({ ...f, totalAllowed: v }))} />
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, paddingTop: 8, borderTop: "1px solid #F1F5F9" }}>
+      <div className="grid-3" style={{ gap: 20, paddingTop: 8, borderTop: "1px solid #F1F5F9" }}>
         <Toggle label="Is Returnable" value={form.isReturnable} onChange={v => setForm((f: any) => ({ ...f, isReturnable: v }))} />
         <Toggle label="Is Cancelable" value={form.isCancelable} onChange={v => setForm((f: any) => ({ ...f, isCancelable: v }))} />
         <Toggle label="Requires OTP" value={form.requiresOtp} onChange={v => setForm((f: any) => ({ ...f, requiresOtp: v }))} />
@@ -331,7 +339,7 @@ function Step3({ form, setForm }: any) {
           </select>
         </Field>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="grid-2" style={{ gap: 16 }}>
         <Field label="Warranty Period">
           <div style={{ display: "flex", gap: 8 }}>
             <input type="number" value={form.warrantyPeriod} onChange={set("warrantyPeriod")} style={{ ...inp, flex: 2 }} placeholder="0" />
@@ -365,7 +373,7 @@ function Step4({ form, setForm }: any) {
       </Field>
       <div style={{ padding: 16, background: "#F8FAFC", borderRadius: 12, border: "1.5px solid #E2E8F0" }}>
         <p style={{ margin: "0 0 12px", fontWeight: 700, fontSize: 14, color: "#374151" }}>Barcode and Dimensions</p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div className="grid-2" style={{ gap: 14 }}>
           <div style={{ gridColumn: "1/-1" }}>
             <Field label="Barcode" required><input value={form.barcode} onChange={set("barcode")} style={inp} placeholder="Scan or enter barcode" /></Field>
           </div>
@@ -532,7 +540,7 @@ function Step7({ form, setForm, taxGroups, stores }: any) {
               <span style={{ color: "#9CA3AF" }}>{expandedStore === sp.storeId ? "^" : "v"}</span>
             </div>
             {expandedStore === sp.storeId && (
-              <div style={{ padding: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div className="grid-2" style={{ padding: 16, gap: 14 }}>
                 <Field label="Price" required>
                   <input type="number" step="0.01" value={sp.price} onChange={e => updateP(sp.storeId, "price", e.target.value)} style={inp} placeholder="0.00" />
                 </Field>

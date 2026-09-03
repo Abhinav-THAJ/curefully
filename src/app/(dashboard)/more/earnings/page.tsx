@@ -37,7 +37,7 @@ export default function EarningsPage() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "24px" }}>
+      <div className="grid-2" style={{ gap: "16px", marginBottom: "24px" }}>
         <div style={{ background: "linear-gradient(135deg,#065F46,#1C6D2B)", borderRadius: "14px", padding: "20px", color: "white" }}>
           <p style={{ fontSize: "13px", opacity: 0.8, marginBottom: "6px" }}>Settled Earnings</p>
           <h2 style={{ fontSize: "28px", fontWeight: 800 }}>${settledTotal.toFixed(2)}</h2>
