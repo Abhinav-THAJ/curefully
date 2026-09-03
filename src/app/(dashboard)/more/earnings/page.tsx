@@ -22,8 +22,19 @@ export default function EarningsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const settledTotal   = settled.reduce((s, e)   => s + parseFloat(String(e.amount)   || "0"), 0);
-  const unsettledTotal = unsettled.reduce((s, e) => s + parseFloat(String(e.amount) || "0"), 0);
+  const getAmount = (e: any) => {
+    let amt = e.amount;
+    if (typeof amt === 'object' && amt !== null) {
+      amt = amt.value || amt.amount || amt.total || 0;
+    }
+    return parseFloat(String(amt || e.earning || e.seller_earning || "0"));
+  };
+
+  const getOrderNumber = (e: any) => e.order_number || e.order?.order_number || e.order_id || "Unknown Order";
+  const getCommission = (e: any) => e.commission_percentage || e.commission || e.admin_commission || 0;
+
+  const settledTotal   = settled.reduce((s, e)   => s + getAmount(e), 0);
+  const unsettledTotal = unsettled.reduce((s, e) => s + getAmount(e), 0);
 
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading earnings...</div>;
 
@@ -55,12 +66,12 @@ export default function EarningsPage() {
         ) : unsettled.map((e, i) => (
           <div key={String(e.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: i < unsettled.length - 1 ? "1px solid #F7FAFC" : "none" }}>
             <div>
-              <div style={{ fontWeight: 600, fontSize: "14px" }}>{String(e.order_number)}</div>
+              <div style={{ fontWeight: 600, fontSize: "14px" }}>{String(getOrderNumber(e))}</div>
               <div style={{ fontSize: "12px", color: "#718096" }}>
-                Commission: {String(e.commission_percentage)}% • {new Date(String(e.created_at)).toLocaleDateString()}
+                Commission: {String(getCommission(e))}% • {e.created_at ? new Date(String(e.created_at)).toLocaleDateString() : "N/A"}
               </div>
             </div>
-            <span className="badge badge-pending">${String(e.amount)}</span>
+            <span className="badge badge-pending">${getAmount(e).toFixed(2)}</span>
           </div>
         ))}
       </div>
@@ -72,12 +83,12 @@ export default function EarningsPage() {
         ) : settled.map((e, i) => (
           <div key={String(e.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: i < settled.length - 1 ? "1px solid #F7FAFC" : "none" }}>
             <div>
-              <div style={{ fontWeight: 600, fontSize: "14px" }}>{String(e.order_number)}</div>
+              <div style={{ fontWeight: 600, fontSize: "14px" }}>{String(getOrderNumber(e))}</div>
               <div style={{ fontSize: "12px", color: "#718096" }}>
-                Commission: {String(e.commission_percentage)}% • {new Date(String(e.created_at)).toLocaleDateString()}
+                Commission: {String(getCommission(e))}% • {e.created_at ? new Date(String(e.created_at)).toLocaleDateString() : "N/A"}
               </div>
             </div>
-            <span className="badge badge-approved">${String(e.amount)}</span>
+            <span className="badge badge-approved">${getAmount(e).toFixed(2)}</span>
           </div>
         ))}
       </div>

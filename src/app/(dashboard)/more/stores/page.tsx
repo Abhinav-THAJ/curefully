@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { ApiRoutes } from "@/lib/apiRoutes";
+import { useRouter } from "next/navigation";
 
 export default function GenericPage() {
+  const router = useRouter();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,7 @@ export default function GenericPage() {
     <div style={{ padding: "24px", maxWidth: "900px", margin: "0 auto" }} className="fade-in">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
         <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#0D1117" }}>My Stores</h1>
-        <button style={{ padding: "10px 16px", background: "#006BD5", color: "white", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer", fontSize: "14px", boxShadow: "0 4px 12px rgba(0,107,213,0.2)" }}>
+        <button onClick={() => router.push('/more/stores/add')} style={{ padding: "10px 16px", background: "#006BD5", color: "white", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer", fontSize: "14px", boxShadow: "0 4px 12px rgba(0,107,213,0.2)" }}>
           + Add New Store
         </button>
       </div>
@@ -65,8 +67,8 @@ export default function GenericPage() {
                 </div>
                 
                 <div style={{ marginTop: "auto", display: "flex", gap: "12px", borderTop: "1px solid #F0F4F8", paddingTop: "16px" }}>
-                  <button style={{ flex: 1, padding: "10px", background: "#F7FAFC", border: "1px solid #E2E8F0", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#4A5568", cursor: "pointer" }}>Edit</button>
-                  <button style={{ flex: 1, padding: "10px", background: "#E0F2FE", border: "1px solid #BAE6FD", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#0284C7", cursor: "pointer" }}>Manage</button>
+                  <button onClick={() => router.push(`/more/stores/edit/${item.id}`)} style={{ flex: 1, padding: "10px", background: "#F7FAFC", border: "1px solid #E2E8F0", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#4A5568", cursor: "pointer" }}>Edit</button>
+                  <button onClick={() => { localStorage.setItem('active_store_id', item.id.toString()); router.push("/dashboard"); }} style={{ flex: 1, padding: "10px", background: "#E0F2FE", border: "1px solid #BAE6FD", borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#0284C7", cursor: "pointer" }}>Manage</button>
                 </div>
               </div>
             </div>

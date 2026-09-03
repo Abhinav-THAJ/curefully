@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -11,16 +11,41 @@ export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">("weekly");
+  const [stores, setStores] = useState<any[]>([]);
+  const [selectedStore, setSelectedStore] = useState<any>(null);
 
+  // Fetch stores on mount
   useEffect(() => {
-    api.get(ApiRoutes.dashboard).then(res => {
+    api.get(ApiRoutes.stores).then(res => {
+      const storesData = res?.data?.data || res?.data || [];
+      setStores(storesData);
+      
+      if (storesData.length > 0) {
+        const savedStoreId = localStorage.getItem('active_store_id');
+        if (savedStoreId) {
+          const savedStore = storesData.find((s: any) => s.id === parseInt(savedStoreId));
+          if (savedStore) {
+            setSelectedStore(savedStore);
+            return;
+          }
+        }
+        setSelectedStore(storesData[0]);
+      }
+    }).catch(console.error);
+  }, []);
+
+  // Fetch dashboard data when selectedStore changes
+  useEffect(() => {
+    if (!selectedStore) return;
+    setLoading(true);
+    api.get(`${ApiRoutes.dashboard}?store_id=${selectedStore.id}`).then(res => {
       setData(res?.data);
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [selectedStore]);
 
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading dashboard...</div>;
   if (!data) return <div style={{ padding: "40px", textAlign: "center", color: "red" }}>Failed to load dashboard data.</div>;
@@ -52,6 +77,31 @@ export default function DashboardPage() {
             <p style={{ fontSize: "13px", color: "#718096", marginTop: "2px" }}>Here is what's happening with your store today.</p>
           </div>
         </div>
+        
+        {stores.length > 0 && (
+          <div style={{ background: "white", padding: "8px 16px", borderRadius: "12px", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", gap: "10px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+            <div style={{ fontSize: "20px" }}>🏪</div>
+            <select
+              value={selectedStore?.id || ""}
+              onChange={(e) => {
+                const store = stores.find(s => s.id === parseInt(e.target.value));
+                if (store) {
+                  setSelectedStore(store);
+                  localStorage.setItem('active_store_id', store.id.toString());
+                }
+              }}
+              style={{
+                border: "none", background: "transparent", fontSize: "15px", fontWeight: 700,
+                color: "#0D1117", outline: "none", cursor: "pointer", width: "220px",
+                textOverflow: "ellipsis"
+              }}
+            >
+              {stores.map(s => (
+                <option key={s.id} value={s.id}>{s.name || s.title}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>

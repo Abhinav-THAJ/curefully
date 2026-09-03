@@ -10,7 +10,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+  const unwrappedParams = use(params);
+  const id = unwrappedParams.id;
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isDispatched, setIsDispatched] = useState(false);

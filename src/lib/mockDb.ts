@@ -313,9 +313,19 @@ export function handleMockRequest(
 
   // ── DASHBOARD ────────────────────────────────────────────────────────────
   if (path.includes('/dashboard')) {
-    const revenue = d.orders.filter(o => o.status === 'delivered').reduce((sum, o) => sum + parseFloat(String(o.payable) || '0'), 0);
-    const totalOrdersCount = d.orders.length;
-    const totalProducts = d.products.length;
+    let filteredOrders = d.orders;
+    let filteredProducts = d.products;
+    
+    if (query.store_id) {
+      const sId = parseInt(query.store_id, 10);
+      filteredOrders = filteredOrders.filter(o => o.store_id === sId);
+      // For products in mock, we can check variant's store_id
+      filteredProducts = filteredProducts.filter(p => p.variants?.some((v: any) => v.store_id === sId));
+    }
+    
+    const revenue = filteredOrders.filter(o => o.status === 'delivered').reduce((sum, o) => sum + parseFloat(String(o.payable) || '0'), 0);
+    const totalOrdersCount = filteredOrders.length;
+    const totalProducts = filteredProducts.length;
     return { success: true, message: "Dashboard data fetched", data: {
       chart: {
         weekly: { period: "Week", data: [
