@@ -56,7 +56,7 @@ const getHeaders = (isMultipart = false) => {
   return headers;
 };
 
-async function handleResponse(res: Response) {
+async function handleResponse(res: Response): Promise<any> {
   if (res.status === 401) {
     removeToken();
     if (typeof window !== 'undefined') {
@@ -67,7 +67,7 @@ async function handleResponse(res: Response) {
 
   // Gracefully handle HTML or invalid JSON
   const text = await res.text();
-  let data: Record<string, unknown>;
+  let data: any;
   try {
     data = JSON.parse(text);
   } catch (e) {

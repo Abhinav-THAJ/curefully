@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser]             = useState<Record<string, unknown> | null>(null);
+  const [user, setUser]             = useState<any>(null);
   const [loading, setLoading]       = useState(true);
   const router = useRouter();
 
